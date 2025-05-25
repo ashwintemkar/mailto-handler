@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailtoHandler - Package Manager Examples</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        .example-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .example-section h2 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .package-manager-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            border-bottom-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+        }
+
+        .mailto-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .mailto-link:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📧 MailtoHandler - Package Manager Examples</h1>
+        <p>Compatible with npm, yarn, pnpm, and bun</p>
+    </div>
+
+    <div class="example-section">
+        <h2>Installation Examples</h2>
+        
+        <div class="package-manager-tabs">
+            <div class="tab active" data-tab="npm">npm</div>
+            <div class="tab" data-tab="yarn">yarn</div>
+            <div class="tab" data-tab="pnpm">pnpm</div>
+            <div class="tab" data-tab="bun">bun</div>
+        </div>
+        
+        <div class="tab-content active" id="npm-content">
+            <pre><code>npm install mailto-handler</code></pre>
+            <p>npm is the default package manager for Node.js and is widely used.</p>
+        </div>
+        
+        <div class="tab-content" id="yarn-content">
+            <pre><code>yarn add mailto-handler</code></pre>
+            <p>Yarn is a fast, reliable, and secure alternative to npm.</p>
+        </div>
+        
+        <div class="tab-content" id="pnpm-content">
+            <pre><code>pnpm add mailto-handler</code></pre>
+            <p>pnpm is a fast, disk space efficient package manager.</p>
+        </div>
+        
+        <div class="tab-content" id="bun-content">
+            <pre><code>bun add mailto-handler</code></pre>
+            <p>Bun is an all-in-one JavaScript runtime and toolkit designed for speed.</p>
+        </div>
+    </div>
+
+    <div class="example-section">
+        <h2>Usage Example</h2>
+        <p>The library works the same way regardless of which package manager you use:</p>
+        
+        <pre><code>// ES Module import
+import MailtoHandler from 'mailto-handler';
+
+// Initialize with options
+const handler = new MailtoHandler({
+  theme: 'auto',
+  autoDetect: true,
+  rememberChoice: true
+});</code></pre>
+
+        <p>Try clicking the email link below to see MailtoHandler in action:</p>
+        <a href="mailto:example@example.com?subject=Testing%20MailtoHandler&body=This%20is%20a%20test%20email" class="mailto-link">Send Test Email</a>
+    </div>
+
+    <script src="../../dist/mailto-handler.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize MailtoHandler
+            const handler = new MailtoHandler({
+                theme: 'auto',
+                rememberChoice: true,
+                autoDetect: true
+            });
+            
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all tab content
+                    const contents = document.querySelectorAll('.tab-content');
+                    contents.forEach(content => content.classList.remove('active'));
+                    
+                    // Show selected tab content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
