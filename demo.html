@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailtoHandler Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        .demo-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .demo-section h2 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .mailto-links {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mailto-link {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        .mailto-link:hover {
+            background: #2563eb;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .control-group select,
+        .control-group input[type="checkbox"] {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #6b7280;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 15px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>📧 MailtoHandler Demo</h1>
+        <p>A better way to handle mailto: links on the web</p>
+    </div>
+
+    <div class="demo-section">
+        <h2>Try It Out</h2>
+        <p>Click any of these email links to see the MailtoHandler in action:</p>
+
+        <div class="mailto-links">
+            <a href="mailto:hello@example.com" class="mailto-link">
+                📧 Simple Email Link
+            </a>
+
+            <a href="mailto:support@company.com?subject=Customer%20Support&body=Hello%2C%0A%0AI%20need%20help%20with..."
+                class="mailto-link">
+                🎯 Pre-filled Subject & Body
+            </a>
+
+            <a href="mailto:team@startup.com?subject=Collaboration%20Opportunity&cc=manager@startup.com&body=Hi%20team%2C%0A%0AI%27d%20like%20to%20discuss..."
+                class="mailto-link">
+                👥 With CC Recipients
+            </a>
+
+            <a href="mailto:newsletter@blog.com?subject=Subscription%20Request&body=Please%20subscribe%20me%20to%20your%20newsletter."
+                class="mailto-link">
+                📰 Newsletter Subscription
+            </a>
+        </div>
+
+        <div class="status" id="status">
+            ✅ MailtoHandler is active and ready!
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Configuration Options</h2>
+        <p>Customize the behavior and appearance of MailtoHandler:</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select">
+                    <option value="auto">Auto (System)</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="default-client">Default Client</label>
+                <select id="default-client">
+                    <option value="">None</option>
+                    <option value="gmail">Gmail</option>
+                    <option value="outlook">Outlook</option>
+                    <option value="yahoo">Yahoo Mail</option>
+                </select>
+            </div>
+
+            <div class="control-group checkbox-group">
+                <input type="checkbox" id="remember-choice" checked>
+                <label for="remember-choice">Remember User Choice</label>
+            </div>
+
+            <div class="control-group checkbox-group">
+                <input type="checkbox" id="show-icons" checked>
+                <label for="show-icons">Show Client Icons</label>
+            </div>
+        </div>
+
+        <button onclick="applySettings()"
+            style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">
+            Apply Settings
+        </button>
+
+        <button onclick="clearPreference()"
+            style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; margin-left: 10px;">
+            Clear Saved Preference
+        </button>
+    </div>
+
+    <div class="demo-section">
+        <h2>Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Smart Interception</h3>
+                <p>Automatically detects and handles all mailto: links on your page</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Customizable UI</h3>
+                <p>Modern, responsive design with light/dark theme support</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>Remember Preferences</h3>
+                <p>Saves user's preferred email client for future use</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Friendly</h3>
+                <p>Works perfectly on all devices and screen sizes</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightweight</h3>
+                <p>Under 15KB minified with zero dependencies</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">♿</div>
+                <h3>Accessible</h3>
+                <p>Full keyboard navigation and screen reader support</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Installation</h2>
+        <div class="code-block">
+            <!-- NPM -->
+            npm install mailto-handler
+
+            <!-- CDN -->
+            &lt;script
+            src="https://cdn.jsdelivr.net/npm/mailto-handler@1.0.0/dist/mailto-handler.min.js"&gt;&lt;/script&gt;
+
+            <!-- Basic Usage -->
+            &lt;script&gt;
+            const handler = new MailtoHandler({
+            theme: 'auto',
+            rememberChoice: true
+            });
+            &lt;/script&gt;
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>
+            Made with ❤️ for better email UX on the web<br>
+            <a href="https://github.com/yourusername/mailto-handler" style="color: #3b82f6;">View on GitHub</a>
+        </p>
+    </div>
+
+    <!-- Include the MailtoHandler library -->
+    <script>
+        // Inline the MailtoHandler class for demo purposes
+        // In production, you'd include this from a separate file or CDN
+
+        class MailtoHandler {
+            constructor(options = {}) {
+                this.options = {
+                    defaultClient: null,
+                    rememberChoice: true,
+                    storageKey: 'mailto-handler-preference',
+                    autoInit: true,
+                    theme: 'light',
+                    position: 'center',
+                    showIcons: true,
+                    customClients: [],
+                    excludeClients: [],
+                    onClientSelect: null,
+                    onError: null,
+                    ...options
+                };
+
+                this.isInitialized = false;
+                this.modalElement = null;
+                this.backdropElement = null;
+
+                this.builtInClients = [
+                    {
+                        id: 'gmail',
+                        name: 'Gmail',
+                        icon: '📧',
+                        urlTemplate: 'https://mail.google.com/mail/?view=cm&to={to}&su={subject}&body={body}',
+                        popular: true
+                    },
+                    {
+                        id: 'outlook',
+                        name: 'Outlook',
+                        icon: '📨',
+                        urlTemplate: 'https://outlook.live.com/mail/0/deeplink/compose?to={to}&subject={subject}&body={body}',
+                        popular: true
+                    },
+                    {
+                        id: 'yahoo',
+                        name: 'Yahoo Mail',
+                        icon: '💌',
+                        urlTemplate: 'https://compose.mail.yahoo.com/?to={to}&subject={subject}&body={body}',
+                        popular: true
+                    },
+                    {
+                        id: 'apple',
+                        name: 'Apple Mail',
+                        icon: '✉️',
+                        urlTemplate: 'mailto:{to}?subject={subject}&body={body}',
+                        description: 'Opens in your default mail app'
+                    }
+                ];
+
+                if (this.options.autoInit) {
+                    this.init();
+                }
+            }
+
+            init() {
+                if (this.isInitialized) return;
+                this.createStyles();
+                this.attachEventListeners();
+                this.isInitialized = true;
+            }
+
+            createStyles() {
+                const styleId = 'mailto-handler-styles';
+                if (document.getElementById(styleId)) return;
+
+                const styles = `
+              .mailto-handler-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+              }
+              
+              .mailto-handler-backdrop.show {
+                opacity: 1;
+              }
+              
+              .mailto-handler-modal {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+                max-width: 400px;
+                width: 90%;
+                transform: scale(0.9) translateY(20px);
+                transition: transform 0.2s ease;
+              }
+              
+              .mailto-handler-backdrop.show .mailto-handler-modal {
+                transform: scale(1) translateY(0);
+              }
+              
+              .mailto-handler-header {
+                padding: 20px 24px 16px;
+                border-bottom: 1px solid #e5e7eb;
+              }
+              
+              .mailto-handler-title {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+                font-family: inherit;
+              }
+              
+              .mailto-handler-clients {
+                padding: 16px 24px;
+              }
+              
+              .mailto-handler-client {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 12px 16px;
+                margin-bottom: 8px;
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                background: white;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: inherit;
+                text-align: left;
+              }
+              
+              .mailto-handler-client:hover {
+                border-color: #3b82f6;
+                background: #f8fafc;
+              }
+              
+              .mailto-handler-client-icon {
+                font-size: 20px;
+                margin-right: 12px;
+                width: 24px;
+                text-align: center;
+              }
+              
+              .mailto-handler-client-name {
+                font-size: 16px;
+                font-weight: 500;
+                color: #111827;
+              }
+              
+              .mailto-handler-modal.dark {
+                background: #1f2937;
+                color: white;
+              }
+              
+              .mailto-handler-modal.dark .mailto-handler-client {
+                background: #374151;
+                border-color: #4b5563;
+                color: white;
+              }
+            `;
+
+                const styleElement = document.createElement('style');
+                styleElement.id = styleId;
+                styleElement.textContent = styles;
+                document.head.appendChild(styleElement);
+            }
+
+            attachEventListeners() {
+                document.addEventListener('click', this.handleMailtoClick.bind(this));
+            }
+
+            handleMailtoClick(event) {
+                const target = event.target.closest('a[href^="mailto:"]');
+                if (!target) return;
+
+                event.preventDefault();
+
+                const href = target.getAttribute('href');
+                const mailtoData = this.parseMailtoUrl(href);
+
+                const savedClient = this.getSavedClient();
+                if (savedClient && this.options.rememberChoice) {
+                    this.openEmailClient(savedClient, mailtoData);
+                    return;
+                }
+
+                this.showClientSelector(mailtoData);
+            }
+
+            parseMailtoUrl(href) {
+                const url = new URL(href);
+                const params = new URLSearchParams(url.search);
+
+                return {
+                    to: url.pathname || '',
+                    subject: params.get('subject') || '',
+                    body: params.get('body') || '',
+                    cc: params.get('cc') || '',
+                    bcc: params.get('bcc') || ''
+                };
+            }
+
+            getAvailableClients() {
+                return this.builtInClients.filter(client =>
+                    !this.options.excludeClients.includes(client.id)
+                );
+            }
+
+            showClientSelector(mailtoData) {
+                this.createModal(mailtoData);
+                document.body.appendChild(this.backdropElement);
+
+                requestAnimationFrame(() => {
+                    this.backdropElement.classList.add('show');
+                });
+            }
+
+            createModal(mailtoData) {
+                this.backdropElement = document.createElement('div');
+                this.backdropElement.className = 'mailto-handler-backdrop';
+                this.backdropElement.addEventListener('click', (e) => {
+                    if (e.target === this.backdropElement) {
+                        this.closeModal();
+                    }
+                });
+
+                this.modalElement = document.createElement('div');
+                this.modalElement.className = `mailto-handler-modal ${this.getThemeClass()}`;
+
+                const clients = this.getAvailableClients();
+
+                this.modalElement.innerHTML = `
+              <div class="mailto-handler-header">
+                <h2 class="mailto-handler-title">Choose Email Client</h2>
+              </div>
+              
+              <div class="mailto-handler-clients">
+                ${clients.map(client => `
+                  <button class="mailto-handler-client" data-client-id="${client.id}" type="button">
+                    ${this.options.showIcons ? `<span class="mailto-handler-client-icon">${client.icon}</span>` : ''}
+                    <div class="mailto-handler-client-name">${client.name}</div>
+                  </button>
+                `).join('')}
+              </div>
+            `;
+
+                this.modalElement.addEventListener('click', (e) => {
+                    const clientButton = e.target.closest('.mailto-handler-client');
+                    if (clientButton) {
+                        const clientId = clientButton.dataset.clientId;
+                        this.handleClientSelection(clientId, mailtoData, this.options.rememberChoice);
+                    }
+                });
+
+                this.backdropElement.appendChild(this.modalElement);
+            }
+
+            handleClientSelection(clientId, mailtoData, rememberChoice) {
+                const clients = this.getAvailableClients();
+                const selectedClient = clients.find(c => c.id === clientId);
+
+                if (!selectedClient) return;
+
+                if (rememberChoice) {
+                    this.saveClientPreference(clientId);
+                }
+
+                this.openEmailClient(selectedClient, mailtoData);
+                this.closeModal();
+
+                if (this.options.onClientSelect) {
+                    this.options.onClientSelect(selectedClient, mailtoData);
+                }
+            }
+
+            openEmailClient(client, mailtoData) {
+                let url = client.urlTemplate;
+
+                url = url.replace('{to}', encodeURIComponent(mailtoData.to));
+                url = url.replace('{subject}', encodeURIComponent(mailtoData.subject));
+                url = url.replace('{body}', encodeURIComponent(mailtoData.body));
+
+                window.open(url, '_blank');
+            }
+
+            closeModal() {
+                if (!this.backdropElement) return;
+
+                this.backdropElement.classList.remove('show');
+                setTimeout(() => {
+                    if (this.backdropElement && this.backdropElement.parentNode) {
+                        this.backdropElement.parentNode.removeChild(this.backdropElement);
+                    }
+                    this.backdropElement = null;
+                    this.modalElement = null;
+                }, 200);
+            }
+
+            getThemeClass() {
+                if (this.options.theme === 'dark') return 'dark';
+                if (this.options.theme === 'auto') {
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : '';
+                }
+                return '';
+            }
+
+            saveClientPreference(clientId) {
+                try {
+                    localStorage.setItem(this.options.storageKey, clientId);
+                } catch (error) {
+                    console.warn('Could not save preference:', error);
+                }
+            }
+
+            getSavedClient() {
+                try {
+                    const saved = localStorage.getItem(this.options.storageKey);
+                    if (saved) return this.getAvailableClients().find(c => c.id === saved);
+                } catch (error) {
+                    // Ignore
+                }
+                return null;
+            }
+
+            clearSavedPreference() {
+                try {
+                    localStorage.removeItem(this.options.storageKey);
+                } catch (error) {
+                    console.warn('Could not clear preference:', error);
+                }
+            }
+
+            updateOptions(newOptions) {
+                this.options = { ...this.options, ...newOptions };
+            }
+
+            destroy() {
+                this.closeModal();
+                document.removeEventListener('click', this.handleMailtoClick);
+
+                const styleElement = document.getElementById('mailto-handler-styles');
+                if (styleElement) {
+                    styleElement.remove();
+                }
+
+                this.isInitialized = false;
+            }
+        }
+
+        // Initialize MailtoHandler
+        let handler = new MailtoHandler({
+            theme: 'auto',
+            rememberChoice: true,
+            onClientSelect: (client, mailtoData) => {
+                updateStatus(`Selected ${client.name} for ${mailtoData.to}`);
+            }
+        });
+
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.style.background = '#ecfdf5';
+            status.style.borderColor = '#10b981';
+            status.style.color = '#065f46';
+        }
+
+        function applySettings() {
+            const theme = document.getElementById('theme-select').value;
+            const defaultClient = document.getElementById('default-client').value || null;
+            const rememberChoice = document.getElementById('remember-choice').checked;
+            const showIcons = document.getElementById('show-icons').checked;
+
+            // Destroy old handler and create new one
+            handler.destroy();
+            handler = new MailtoHandler({
+                theme: theme,
+                defaultClient: defaultClient,
+                rememberChoice: rememberChoice,
+                showIcons: showIcons,
+                onClientSelect: (client, mailtoData) => {
+                    updateStatus(`Selected ${client.name} for ${mailtoData.to}`);
+                }
+            });
+
+            updateStatus('⚙️ Settings applied successfully!');
+        }
+
+        function clearPreference() {
+            handler.clearSavedPreference();
+            updateStatus('🗑️ Saved preference cleared!');
+        }
+    </script>
+</body>
+
+</html>
