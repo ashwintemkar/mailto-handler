@@ -298,6 +298,8 @@ class MailtoHandler {
           .mailto-handler-modal {
             width: 95%;
             margin: 20px;
+            max-height: 90vh;
+            border-radius: 8px;
           }
           
           .mailto-handler-header,
@@ -305,6 +307,36 @@ class MailtoHandler {
           .mailto-handler-footer {
             padding-left: 16px;
             padding-right: 16px;
+          }
+          
+          .mailto-handler-client {
+            padding: 14px;
+            margin-bottom: 10px;
+          }
+          
+          .mailto-handler-client-icon {
+            font-size: 22px;
+          }
+          
+          /* Larger touch targets for mobile */
+          .mailto-handler-cancel {
+            padding: 10px 16px;
+            font-size: 15px;
+          }
+          
+          /* Full-width modal on very small screens */
+          @media (max-width: 380px) {
+            .mailto-handler-modal {
+              width: 100%;
+              margin: 0;
+              border-radius: 0;
+              max-height: 100vh;
+              height: 100vh;
+            }
+            
+            .mailto-handler-clients {
+              max-height: calc(100vh - 180px);
+            }
           }
         }
         

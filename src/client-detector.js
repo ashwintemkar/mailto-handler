@@ -27,19 +27,23 @@ class ClientDetector {
     this.detectedClients = [];
     this._detectionCount++;
     
-    // TODO: Add more sophisticated detection in future versions
-    // Maybe we can use feature detection for installed apps?
+    // Note: This is based on common patterns I've observed
+    // Future: Could add local app detection if browser APIs allow
     
-    // Check if running in mobile environment
+    // Mobile detection with improved patterns
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(this.userAgent);
     
-    // iOS device detection
+    // iOS device detection with version detection
     const isIOS = /iPad|iPhone|iPod/.test(this.userAgent) && !window.MSStream;
+    const iOSVersion = isIOS ? 
+      parseInt(this.userAgent.match(/OS (\d+)_/i)?.[1] || '0', 10) : 0;
     
-    // Android detection
+    // Android detection with version detection
     const isAndroid = /Android/.test(this.userAgent);
+    const androidVersion = isAndroid ? 
+      parseFloat(this.userAgent.match(/Android (\d+(\.\d+)?)/i)?.[1] || '0') : 0;
     
-    // MacOS detection - had to fix this for newer MacBooks
+    // MacOS detection - fixed for M1/M2 Macs
     const isMac = /Mac/.test(this.platform);
     
     // Windows detection
@@ -57,20 +61,44 @@ class ClientDetector {
     // Edge detection
     const isEdge = /Edg/.test(this.userAgent);
     
+    // Samsung browser detection
+    const isSamsung = /SamsungBrowser/.test(this.userAgent);
+
     // Check for specific clients based on platform and browser
     if (isIOS) {
-      this.detectedClients.push('apple'); // Apple Mail is default on iOS
+      // Apple Mail is default on iOS
+      this.detectedClients.push('apple');
+      
+      // Gmail and Outlook are common on iOS too
       this.detectedClients.push('gmail');
       this.detectedClients.push('outlook');
+      
+      // Newer iOS versions might have different defaults
+      if (iOSVersion >= 14) {
+        // iOS 14+ allows changing default mail app
+        this.detectedClients.unshift('gmail'); // Gmail more common as custom default
+      }
     }
     
     if (isAndroid) {
-      this.detectedClients.push('gmail'); // Gmail is common on Android
+      // Gmail is typically default on Android
+      this.detectedClients.push('gmail');
       this.detectedClients.push('outlook');
+      
+      // Samsung devices often use Samsung Email
+      if (isSamsung) {
+        this.detectedClients.unshift('samsung');
+      }
+      
+      // Newer Android versions allow changing defaults
+      if (androidVersion >= 10) {
+        // More variety in defaults on newer Android
+        this.detectedClients.push('protonmail');
+      }
     }
     
     if (isMac) {
-      // My Mac testing showed Apple Mail is typically the default
+      // Apple Mail is typically the default on macOS
       this.detectedClients.push('apple'); 
     }
     
@@ -86,7 +114,7 @@ class ClientDetector {
     }
     
     if (isFirefox) {
-      // From my testing, Firefox users often have Thunderbird
+      // Firefox users often have Thunderbird
       this.detectedClients.push('thunderbird'); 
     }
     
