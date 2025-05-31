@@ -18,6 +18,13 @@ class MailtoHandler {
         excludeClients: [],
         onClientSelect: null,
         onError: null,
+        // New accessibility options
+        a11y: {
+          closeLabel: 'Close email client selection',
+          modalLabel: 'Email client selection',
+          headerText: 'Choose your email client',
+          subheaderText: 'Select which app you want to use to send this email'
+        },
         ...options
       };
   
@@ -395,68 +402,130 @@ class MailtoHandler {
       // Create backdrop
       this.backdropElement = document.createElement('div');
       this.backdropElement.className = 'mailto-handler-backdrop';
-      this.backdropElement.addEventListener('click', (e) => {
-        if (e.target === this.backdropElement) {
-          this.closeModal();
-        }
-      });
-  
+      this.backdropElement.setAttribute('role', 'dialog');
+      this.backdropElement.setAttribute('aria-modal', 'true');
+      this.backdropElement.setAttribute('aria-labelledby', 'mailto-handler-title');
+      this.backdropElement.setAttribute('aria-describedby', 'mailto-handler-subtitle');
+      
       // Create modal
       this.modalElement = document.createElement('div');
       this.modalElement.className = `mailto-handler-modal ${this.getThemeClass()}`;
       
-      const clients = this.getAvailableClients();
-      const recipientDisplay = mailtoData.to || 'recipient';
-      
-      this.modalElement.innerHTML = `
-        <div class="mailto-handler-header">
-          <h2 class="mailto-handler-title">Choose Email Client</h2>
-          <p class="mailto-handler-subtitle">Send email to ${recipientDisplay}</p>
-        </div>
-        
-        <div class="mailto-handler-clients">
-          ${clients.map(client => `
-            <button class="mailto-handler-client" data-client-id="${client.id}" type="button">
-              ${this.options.showIcons ? `<span class="mailto-handler-client-icon">${client.icon}</span>` : ''}
-              <div class="mailto-handler-client-info">
-                <div class="mailto-handler-client-name">${client.name}</div>
-                ${client.description ? `<div class="mailto-handler-client-desc">${client.description}</div>` : ''}
-              </div>
-            </button>
-          `).join('')}
-        </div>
-        
-        <div class="mailto-handler-footer">
-          <label class="mailto-handler-remember">
-            <input type="checkbox" ${this.options.rememberChoice ? 'checked' : ''} id="remember-choice">
-            Remember my choice
-          </label>
-          <button class="mailto-handler-cancel" type="button">Cancel</button>
-        </div>
-      `;
-  
-      // Add event listeners
-      this.modalElement.addEventListener('click', (e) => {
-        const clientButton = e.target.closest('.mailto-handler-client');
-        const cancelButton = e.target.closest('.mailto-handler-cancel');
-        
-        if (clientButton) {
-          const clientId = clientButton.dataset.clientId;
-          const rememberChoice = this.modalElement.querySelector('#remember-choice').checked;
-          this.handleClientSelection(clientId, mailtoData, rememberChoice);
-        } else if (cancelButton) {
-          this.closeModal();
-        }
-      });
-  
-      // Add keyboard navigation
-      this.modalElement.addEventListener('keydown', (e) => {
+      // Add keyboard event listener for accessibility
+      this.backdropElement.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           this.closeModal();
+        } else if (e.key === 'Tab') {
+          // Focus trap inside modal
+          const focusableElements = this.modalElement.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
         }
       });
-  
+      
+      // Create header
+      const header = document.createElement('div');
+      header.className = 'mailto-handler-header';
+      
+      const title = document.createElement('h2');
+      title.className = 'mailto-handler-title';
+      title.id = 'mailto-handler-title';
+      title.textContent = this.options.a11y.headerText;
+      
+      const subtitle = document.createElement('p');
+      subtitle.className = 'mailto-handler-subtitle';
+      subtitle.id = 'mailto-handler-subtitle';
+      subtitle.textContent = this.options.a11y.subheaderText;
+      
+      header.appendChild(title);
+      header.appendChild(subtitle);
+      
+      // Create client list
+      const clientsContainer = document.createElement('div');
+      clientsContainer.className = 'mailto-handler-clients';
+      
+      // Get available clients
+      const clients = this.getAvailableClients();
+      
+      // Create client buttons
+      clients.forEach(client => {
+        const clientButton = document.createElement('button');
+        clientButton.className = 'mailto-handler-client';
+        clientButton.setAttribute('type', 'button');
+        clientButton.setAttribute('aria-label', `Use ${client.name} to send email`);
+        
+        clientButton.addEventListener('click', () => {
+          this.handleClientSelection(client.id, mailtoData, this.options.rememberChoice);
+        });
+        
+        const iconElement = document.createElement('span');
+        iconElement.className = 'mailto-handler-client-icon';
+        iconElement.setAttribute('aria-hidden', 'true');
+        iconElement.textContent = client.icon || '📧';
+        
+        const infoElement = document.createElement('div');
+        infoElement.className = 'mailto-handler-client-info';
+        
+        const nameElement = document.createElement('p');
+        nameElement.className = 'mailto-handler-client-name';
+        nameElement.textContent = client.name;
+        
+        infoElement.appendChild(nameElement);
+        
+        if (client.description) {
+          const descElement = document.createElement('p');
+          descElement.className = 'mailto-handler-client-desc';
+          descElement.textContent = client.description;
+          infoElement.appendChild(descElement);
+        }
+        
+        clientButton.appendChild(iconElement);
+        clientButton.appendChild(infoElement);
+        clientsContainer.appendChild(clientButton);
+      });
+      
+      // Add close button
+      const footer = document.createElement('div');
+      footer.className = 'mailto-handler-footer';
+      
+      const closeButton = document.createElement('button');
+      closeButton.className = 'mailto-handler-close';
+      closeButton.setAttribute('type', 'button');
+      closeButton.setAttribute('aria-label', this.options.a11y.closeLabel);
+      closeButton.textContent = 'Cancel';
+      closeButton.addEventListener('click', () => {
+        this.closeModal();
+      });
+      
+      footer.appendChild(closeButton);
+      
+      // Assemble modal
+      this.modalElement.appendChild(header);
+      this.modalElement.appendChild(clientsContainer);
+      this.modalElement.appendChild(footer);
       this.backdropElement.appendChild(this.modalElement);
+      
+      // Add to DOM
+      document.body.appendChild(this.backdropElement);
+      
+      // Show with animation
+      setTimeout(() => {
+        this.backdropElement.classList.add('show');
+        
+        // Focus first client button for accessibility
+        const firstButton = this.modalElement.querySelector('.mailto-handler-client');
+        if (firstButton) {
+          firstButton.focus();
+        }
+      }, 10);
     }
   
     handleClientSelection(clientId, mailtoData, rememberChoice) {
