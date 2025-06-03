@@ -120,9 +120,6 @@ const handler = new MailtoHandler({
 
 - **[Installation & Setup](docs/INSTALLATION.md)** - Detailed installation guide for all environments
 - **[Configuration](docs/CONFIGURATION.md)** - Complete configuration options and examples
-- **[API Reference](docs/API.md)** - Full API documentation and methods
-- **[Customization](docs/CUSTOMIZATION.md)** - Theming and styling guide
-- **[Examples](examples/)** - Working examples for different frameworks
 
 ## Browser Support
 
@@ -142,7 +139,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## License
 
-GPL 3.0 © [Ashwin Temkar](https://github.com/rothardo/mailto-handler)
+GPL 3.0 © [Ashwin Temkar](https://github.com/rothardo/mailto-handler?tab=GPL-3.0-1-ov-file)
 
 ## Support
 
