@@ -139,7 +139,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## License
 
-GPL 3.0 © [Ashwin Temkar](https://github.com/rothardo/mailto-handler?tab=GPL-3.0-1-ov-file)
+Apache 2.0 © [Ashwin Temkar](mailto-handler/tree/main?tab=Apache-2.0-1-ov-file)
 
 ## Support
 
